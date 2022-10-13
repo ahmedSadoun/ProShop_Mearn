@@ -4,9 +4,12 @@ import { Provider } from 'react-redux'
 import store from './store'
 import './bootstrap.min.css'
 import './index.css';
+// import * as Sentry from "@sentry/react";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+// Sentry.init({
+//   dsn: "https://<key>@sentry.io/<project>"
+// });
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
