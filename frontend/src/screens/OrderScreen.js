@@ -37,7 +37,7 @@ const OrderScreen = () => {
             script.onload = () => {
                 setSdkReady(true);
             }
-            document.body.appendChild(script);
+            document.head.appendChild(script);
         }
         /* we need to see the order if the payment is successful or not 
         so get the product if there is no order or the successpay is true 
@@ -55,8 +55,8 @@ const OrderScreen = () => {
     }, [dispatch, orderId, successPay, order])
 
     const successPaymentHandler = (paymentResult) => {
-        console.log(paymentResult)
         dispatch(payOrder(orderId, paymentResult))
+        window.location.reload();
     }
     return loading ? <Loader /> : error ? <Message variant='danger'>{error}</Message> :
         <>

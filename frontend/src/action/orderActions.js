@@ -4,7 +4,10 @@ import {
     ORDER_CREATE_FAIL,
     ORDER_DETAILS_REQUEST,
     ORDER_DETAILS_SUCCESS,
-    ORDER_DETAILS_FAIL
+    ORDER_DETAILS_FAIL,
+    ORDER_PAY_FAIL,
+    ORDER_PAY_REQUEST,
+    ORDER_PAY_SUCCESS
 } from '../constants/orderConstants'
 import axios from 'axios';
 
@@ -22,7 +25,7 @@ export const createOrder = (order) => async (dispatch, getState) => {
             }
         }
         // when the request is a post one , then we have to pass the payload as an object parameter .
-        const { data } = await axios.post(`api/orders`, order, config)
+        const { data } = await axios.post(`/api/orders`, order, config)
         dispatch({
             type: ORDER_CREATE_SUCCESS,
             payload: data
@@ -80,6 +83,7 @@ export const payOrder = (orderId, paymentResult) => async (dispatch, getState) =
         }
         // when the request is a post one , then we have to pass the payload as an object parameter .
         const { data } = await axios.put(`/api/orders/${orderId}/pay`, paymentResult, config)
+        console.log(orderId)
         dispatch({
             type: ORDER_PAY_SUCCESS,
             payload: data
