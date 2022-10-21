@@ -21,15 +21,13 @@ const LoginScreen = ({ }) => {
     const userLogin = useSelector((state) => state.userLogIn);
 
     const { loading, error, userInfo } = userLogin;
-    console.log(error)
     useEffect(() => {
         //we want to check if the user is existed or not .
         //if the user is existed then redirect .
         if (userInfo) {
-            console.log(redirect)
             navigate(redirect)
         }
-    }, [history, userInfo])
+    }, [navigate, userInfo])
     const submitHandler = (e) => {
         e.preventDefault();
         dispatch(login(email, password))

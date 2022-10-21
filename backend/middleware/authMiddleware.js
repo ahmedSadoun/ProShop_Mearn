@@ -4,19 +4,18 @@ import User from '../models/userModel.js';
 
 const protect = AsyncHandler(async (req, res, next) => {
     let token;
-
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
             token = req.headers.authorization.split(' ')[1]
             const decode = jwt.verify(token, process.env.JWT_SECRET)
-           
+
             req.user = await User.findById(decode.id).select('-password')
             next()
         } catch (error) {
-          
-                console.error(error)
-                res.status(401)
-                throw new Error('Not authorized , no token')
+
+            console.error(error)
+            res.status(401)
+            throw new Error('Not authorized , no token')
         }
     }
     if (!token) {
@@ -26,7 +25,18 @@ const protect = AsyncHandler(async (req, res, next) => {
 
 
 })
-export default protect
+const admin = AsyncHandler(async (req, res, next) => {
+    if (req.user && req.user.isAdmin) {
+        next()
+    } else {
+        return res.send('Not Authorized as an Admin')
+    }
+
+})
+
+
+
+export { protect, admin }
 
 
 

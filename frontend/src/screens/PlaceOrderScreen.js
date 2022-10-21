@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import CheckoutSteps from '../components/CheckoutSteps'
 import { createOrder } from '../action/orderActions'
+import { ORDER_PAY_RESET } from '../constants/orderConstants'
 import './placeOrder.css'
 const PlaceOrderScreen = () => {
     const dispatch = useDispatch();
@@ -30,9 +31,10 @@ const PlaceOrderScreen = () => {
             navigate(`/order/${order._id}`)
         }
         //eslint-disable-next-line
-    }, [success])
+    }, [success, navigate])
     // console.log(cart.shippingAddress)
     const PlaceOrderHandler = () => {
+
         dispatch(createOrder({
             orderItems: cart.cartItems,
             shippingAddress: cart.shippingAddress,

@@ -10,7 +10,9 @@ import { getOrderDetails, payOrder } from '../action/orderActions'
 import './placeOrder.css'
 import { ORDER_PAY_RESET } from '../constants/orderConstants'
 const OrderScreen = () => {
+
     const { id: orderId } = useParams();
+    console.log('the order id is ', orderId)
     const [sdkReady, setSdkReady] = useState(false);
     const dispatch = useDispatch();
     const orderDetails = useSelector(state => state.orderDetails)
@@ -25,38 +27,50 @@ const OrderScreen = () => {
         }
         order.orderPrice = addDecimals(order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0))
     }
-    useEffect(() => {
-        const addPayPalScript = async () => {
-            //in order to get the sdk ready 
-            const { data: clientId } = await axios.get('/api/config/paypal')
-            const script = document.createElement('script')
-            script.type = 'text/javascript'
-            script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`
-            script.async = true;
-            //on this element is being loaded then update the state of the sdk
-            script.onload = () => {
-                setSdkReady(true);
+    
+
+        useEffect(() => {
+
+            const addPayPalScript = async () => {
+                //in order to get the sdk ready 
+                const { data: clientId } = await axios.get('/api/config/paypal')
+                const script = document.createElement('script')
+                script.type = 'text/javascript'
+                script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`
+                script.async = true;
+                //on this element is being loaded then update the state of the sdk
+                script.onload = () => {
+                    setSdkReady(true);
+                }
+                document.head.appendChild(script);
             }
-            document.head.appendChild(script);
-        }
-        /* we need to see the order if the payment is successful or not 
-        so get the product if there is no order or the successpay is true 
-        */
-        if (!order || successPay) {
-            dispatch({ type: ORDER_PAY_RESET })
-            dispatch(getOrderDetails(orderId))
-        } else if (!order.isPaid) { // if the order is not paid then give the ability to pay 
-            if (!window.paypal) {//if the window dosn't have the paypal script then add it 
-                addPayPalScript();
-            } else {
-                setSdkReady(true);
+            /* we need to see the order if the payment is successful or not 
+            so get the product if there is no order or the successpay is true 
+            */
+            console.log(`order ${order} \n orderId ${orderId}`)
+
+            if (!order || successPay) {
+                dispatch({ type: ORDER_PAY_RESET })
+                dispatch(getOrderDetails(orderId))
+            } else if (!order.isPaid) { // if the order is not paid then give the ability to pay 
+                if (!window.paypal) {//if the window dosn't have the paypal script then add it 
+                    addPayPalScript();
+                } else {
+                    setSdkReady(true);
+                }
             }
+        }, [dispatch, orderId, successPay, order])
+        if (order && order._id !== orderId) {
+            window.location.reload();
         }
-    }, [dispatch, orderId, successPay, order])
 
     const successPaymentHandler = (paymentResult) => {
         dispatch(payOrder(orderId, paymentResult))
-        window.location.reload();
+        dispatch({ type: ORDER_PAY_RESET })
+        
+
+        // dispatch(getOrderDetails(orderId))
+
     }
     return loading ? <Loader /> : error ? <Message variant='danger'>{error}</Message> :
         <>

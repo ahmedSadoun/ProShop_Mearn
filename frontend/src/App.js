@@ -13,6 +13,9 @@ import ShippingScreen from './screens/ShippingScreen';
 import PaymentScreen from './screens/PaymentScreen';
 import PlaceOrderScreen from './screens/PlaceOrderScreen';
 import OrderScreen from './screens/OrderScreen';
+import MyOrderList from './components/MyOrderList'
+import UpdateUserProfile from './components/UpdateProfile'
+import ListUsersScreen from './screens/ListUsersScreen'
 const App = () => {
   return (
     <Router>
@@ -24,9 +27,12 @@ const App = () => {
             <Route path='/shipping' element={<ShippingScreen />} exact />
             <Route path='/payment' element={<PaymentScreen />} exact />
             <Route path='/placeorder' element={<PlaceOrderScreen />} exact />
+            <Route path='/updateuserprofile' element={<UpdateUserProfile />} exact />
+            <Route path='/myorderlist' element={<MyOrderList />} exact />
             <Route path='/order/:id' element={<OrderScreen />} exact />
             <Route path='/login' element={<LoginScreen />} exact />
             <Route path='/product/:id' element={<ProductScreen />} />
+            <Route path='/admin/userlist' element={<ListUsersScreen />} />
             {/* this means that the id is optional  */}
             <Route path='/cart/:id?' element={<CartScreen />} />
             <Route path='/cart/:id' element={<CartScreen />} />

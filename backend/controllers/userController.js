@@ -44,9 +44,9 @@ const registerUser = AsyncHandler(async (req, res) => {
                 idAdmin: user.isAdmin,
                 token: generateToken(user._id)
             })
-        }else {
-         res.status(404);
-         throw new Error('User not found')       
+        } else {
+            res.status(404);
+            throw new Error('User not found')
         }
     }
 })
@@ -71,30 +71,44 @@ const userProfile = AsyncHandler(async (req, res) => {
 })
 
 
+
+
 //@desc update the user profile 
 //@route Put /user/logIn/profile
 //@access Private : means that we need to logged in to see access this endpoint
 const updatUserProfile = AsyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
     if (user) {
-       user.name=req.body.name || user.name;
-       user.email = req.body.email||user.email;
-       if(req.body.password){
-           //and this will be encrypted automatically 
-           user.password = req.body.passwrod;
-       }
-       const updatedUser = await user.save();
-       res.json({
-        _id: updatedUser._id,
-        name: updatedUser.name,
-        email: updatedUser.email,
-        idAdmin: updatedUser.isAdmin,
-        token: generateToken(updatedUser._id)
-    })
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+        if (req.body.password) {
+            //and this will be encrypted automatically 
+            user.password = req.body.password;
+        }
+        const updatedUser = await user.save();
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            idAdmin: updatedUser.isAdmin,
+            token: generateToken(updatedUser._id)
+        })
     } else {
         res.status(404)
         throw new Error('User not found')
     }
     //res.send("success");
 })
-export { authUser,registerUser, userProfile , updatUserProfile };
+
+//@desc get all the users
+//@route Get /users
+//@access Private : means that we need to logged in to see access this endpoint
+const getUsers = AsyncHandler(async (req, res) => {
+    const users = await User.find({})
+    res.send(users);
+    //res.send("success");
+})
+
+
+
+export { authUser, registerUser, userProfile, updatUserProfile, getUsers };
