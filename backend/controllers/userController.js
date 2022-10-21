@@ -70,9 +70,6 @@ const userProfile = AsyncHandler(async (req, res) => {
     //res.send("success");
 })
 
-
-
-
 //@desc update the user profile 
 //@route Put /user/logIn/profile
 //@access Private : means that we need to logged in to see access this endpoint
@@ -102,13 +99,66 @@ const updatUserProfile = AsyncHandler(async (req, res) => {
 
 //@desc get all the users
 //@route Get /users
-//@access Private : means that we need to logged in to see access this endpoint
+//@access  Private/ADMIN : means that we need to logged in to see access this endpoint
 const getUsers = AsyncHandler(async (req, res) => {
     const users = await User.find({})
     res.send(users);
     //res.send("success");
 })
+//@desc get a user by its id
+//@route Get api/users/:id
+//@access  Private/ADMIN : means that we need to logged in to see access this endpoint
+const getUserByID = AsyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id).select('-password')
+    if (user) {
+        res.json(user);
+    } else {
+        res.status(404)
+        throw new Error('No users were founded')
+    }
+    //res.send("success");
+})
+
+//@desc delete a user
+//@route delete /users/:id
+//@access Private/ADMIN : means that we need to logged in to see access this endpoint
+const deleteUser = AsyncHandler(async (req, res) => {
+    //req.params.id : we use in order to get the data from the url 
+    //req.body.id : in order to get the data from the request data body " the payload "
+    const user = await User.findById(req.params.id)
+    if (user) {
+        await user.remove();
+        res.json({ Message: 'user deleted' })
+    } else {
+        res.status(404)
+        throw new Error(' user is not found')
+    }
+
+})
 
 
+//@desc update the user profile admin 
+//@route Put /users/:id
+//@access Private/ADMIN : means that we need to logged in to see access this endpoint
+const updatUser = AsyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (user) {
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+        user.isAdmin = req.body.isAdmin
+        const updatedUser = await user.save();
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            isAdmin: updatedUser.idAdmin,
+        })
+    } else {
+        res.status(404)
+        throw new Error('User not found')
+    }
+    //res.send("success");
+})
 
-export { authUser, registerUser, userProfile, updatUserProfile, getUsers };
+
+export { authUser, registerUser, userProfile, updatUserProfile, getUsers, deleteUser, getUserByID, updatUser };

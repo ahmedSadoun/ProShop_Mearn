@@ -6,23 +6,23 @@ import Loader from '../components/Loader'
 import { LinkContainer } from 'react-router-bootstrap'
 import { listUsers, } from '../action/userAction'
 import { useNavigate } from 'react-router-dom'
+import { deleteUser } from '../action/userAction'
+import checkIfAdmin from '../checkIfAdmin'
 export default function ListUsersScreen() {
-    const userLogIn = useSelector((state) => state.userLogIn);
-    const { userInfo } = userLogIn;
-    const navigate = useNavigate();
-    if (!userInfo) {
-        navigate('/')
-    } else if (!userInfo.idAdmin) {
-        navigate('/')
-    }
+    //checkIfAdmin();
     const userList = useSelector((state) => state.userList);
     const { loading, error, users } = userList;
+
+    const userDelete = useSelector((state) => state.userDelete);
+    const { success } = userDelete;
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(listUsers())
-    }, [dispatch])
+    }, [dispatch, success])
     const deleteHandler = (id) => {
-        console.log('deleted')
+        if (window.confirm('are you sure ? ')) {
+            dispatch(deleteUser(id))
+        }
     }
     return <Row >
         <Col md={9}>
@@ -54,7 +54,7 @@ export default function ListUsersScreen() {
                                                 )}
                                         </td>
                                         <td>
-                                            <LinkContainer to={`/user/${user._id}/edit`}>
+                                            <LinkContainer to={`/admin/user/${user._id}/edit`}>
                                                 <Button variant='light' className='btn-sm'>
                                                     <i className='fas fa-edit'></i>
                                                 </Button>

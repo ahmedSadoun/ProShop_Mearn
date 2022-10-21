@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useSelector } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Container } from 'react-bootstrap'
 import Header from './components/Header'
@@ -16,7 +16,10 @@ import OrderScreen from './screens/OrderScreen';
 import MyOrderList from './components/MyOrderList'
 import UpdateUserProfile from './components/UpdateProfile'
 import ListUsersScreen from './screens/ListUsersScreen'
+import UserEditScreen from './screens/UserEditScreen'
+import ProtectedAdminRoutes from "./Admin/ProtectedAdminRoutes";
 const App = () => {
+
   return (
     <Router>
       <Header />
@@ -32,13 +35,17 @@ const App = () => {
             <Route path='/order/:id' element={<OrderScreen />} exact />
             <Route path='/login' element={<LoginScreen />} exact />
             <Route path='/product/:id' element={<ProductScreen />} />
-            <Route path='/admin/userlist' element={<ListUsersScreen />} />
             {/* this means that the id is optional  */}
             <Route path='/cart/:id?' element={<CartScreen />} />
             <Route path='/cart/:id' element={<CartScreen />} />
             <Route path='/cart' element={<CartScreen />} />
             <Route path='/register' element={<RegisterScreen />} />
             <Route path='/profile' element={<ProfileScreen />} />
+            {/* these are a protected routes. Only the ADMIN can access them */}
+            <Route element={<ProtectedAdminRoutes />}>
+              <Route path='/admin/user/:id/edit' component={<UserEditScreen />} />
+              <Route path='/admin/userlist' element={<ListUsersScreen />} />
+            </Route>
           </Routes>
         </Container>
       </main>

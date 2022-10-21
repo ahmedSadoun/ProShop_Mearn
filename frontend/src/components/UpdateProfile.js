@@ -35,7 +35,6 @@ const UpdateProfile = () => {
             navigate('/login')
         } else {
             if (!user.name) {
-                console.log(`the user details ${user}`)
                 dispatch(getUserDetails('profile'))
             } else {
                 // console.log(`the name is ${user.name}`)
